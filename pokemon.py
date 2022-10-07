@@ -5,48 +5,53 @@ res = requests.get('https://pokeapi.co/api/v2')
 res.json()
 
 
-pokepedia = res.json()
+
 
 
 class PokemonAPI:
-    base_url = 'https://pokeapi.co/api/v2/'
     api_method = "pokemon/"
+    base_url = 'https://pokeapi.co/api/v2/'
     
     def __init__(self, pokemon):
         self.pokemon = pokemon
         
-    def get(self, api_method, pokemon):
-        request_url = f"{self.base_url}{api_method}{pokemon}"
-        res = requests.get(request_url)
-        return res.json()
-    
-    def get_height(self, pokemon):
-        pokepedia = self.get("pokemon/",pokemon)
+        
+    def _get(self):
+        request_url = f"{self.base_url}{self.api_method}{self.pokemon}"
+        pokepedia = requests.get(request_url)
+        return pokepedia.json()
+
+
+class Pokemon(PokemonAPI):
+
+    def __init__(self, pokemon):
+        super().__init__(pokemon)
+        
+        
+    def get_height(self):
+        pokepedia = self._get()
         height = pokepedia['height']
         return height
         
-    def get_weight(self, pokemon):
-        pokepedia = self.get("pokemon/", pokemon)
+        
+    def get_weight(self):
+        pokepedia = self._get()
         weight = pokepedia["weight"]
         return weight
-    
-    
 
+# prof_oak = PokemonAPI()
     
 def pokedex():
-    poke_storage = []
-    print("Hello welcome to the world of pokemon!")
+    print("Hello, welcome to the world of Pokemon!")
     while True:
-        whos_that_pokemon = input("""What is the name of the pokemon you want to learn more about? 
-        When you want to get back to your journey please press 'A' """)
-        if whos_that_pokemon.lower == "a":
+        whos_that_pokemon = input("""\nMy name is Professor Oaks!\nThis is a Pokedex it will aid you in your journey to be a Pokemon Master!\nWhat is the name of the Pokemon you want to learn more about? 
+When you want to get back to your journey please press 'A' """).lower()
+        if whos_that_pokemon.lower() == "a":
             break
-        prof_oak = PokemonAPI(whos_that_pokemon)
-        for pokemon in whos_that_pokemon:
-            poke_height = prof_oak.get_height(pokemon)
-            poke_weight = prof_oak.get_weight(pokemon)
-            poke_storage.append(poke_height, poke_weight)
-        print(f'That pokemon is {whos_that_pokemon} They measue about {poke_storage.get_height()}in in height and weights {poke_storage.get_weight()}.')
+        prof_oak = Pokemon(whos_that_pokemon)
+        poke_height = prof_oak.get_height()
+        poke_weight = prof_oak.get_weight()
+        print(f'That Pokemon is {whos_that_pokemon.title()} They measure about {poke_height}m in height and weighs {poke_weight}lbs.')
         
         
     # couldn't figure out how to fix the pokedex
